@@ -1,4 +1,4 @@
-    
+#!/usr/bin/python
 import paho.mqtt.client as mqtt
 from jsonrpclib import Server
 from thread import start_new_thread
@@ -19,21 +19,36 @@ def on_message(client, userdata, msg):
         onoff = 0
         if "ON" in msg.payload:
             onoff = 1
+        elif "on" in msg.payload:
+            onoff = 1
         elif "OFF" in msg.payload:
+            onoff = 0
+        elif "off" in msg.payload:
             onoff = 0
         else:
             onoff=int(msg.payload)
         switchReduitLamp(onoff)
     if "kitchenlamp" in msg.topic:
         dimval = 0
+        print("evaluate kitchenlamp value")
         global LastDimValue
         if "ON" in msg.payload:
+            print("received ON cmd for kitchenlamp")
             dimval = LastDimValue
+        elif "on" in msg.payload:
+            print("received ON cmd for kitchenlamp")
+            dimval = LastDimValue
+        elif "off" in msg.payload:
+            print("received OFF cmd for kitchenlamp")
+            dimval = 0
         elif "OFF" in msg.payload:
+            print("received OFF cmd for kitchenlamp")
             dimval = 0
         else:
+            print("set dimvalue for kitchenlamp (and turn on if necessary")
             dimval=int(msg.payload)
             LastDimValue = dimval
+        print("set now dim value of kitchen: "+str(dimval))
         switchKitchenSpots(dimval)
 
 
